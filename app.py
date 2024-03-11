@@ -4,6 +4,19 @@ import matplotlib.pyplot as plt
 import matplotlib.style as style
 import os
 
+
+def generate_fractions_df(df, age_groups):
+    # Calculate fractions
+    for age_group in age_groups:
+        fraction_column = f'fraction_{age_group}'
+        df[fraction_column] = df[age_group] / df['P20_POP']
+
+    # Create a new DataFrame with just the fractions
+    fractions_df = df[[f'fraction_{age_group}' for age_group in age_groups]]
+
+    return fractions_df
+
+
 # Set the style to use a black background
 style.use('dark_background')
 
@@ -16,24 +29,24 @@ filepath_meta = os.path.join('data', 'dossier_complet', meta_filename)
 # Sample DataFrame (replace this with your actual data)
 df = pd.read_csv(filepath, delimiter=';', low_memory=False)
 
-# Calculate fractions
-age_groups = ['P20_POP0014', 'P20_POP1529', 'P20_POP3044', 'P20_POP4559', 'P20_POP6074', 'P20_POP7589', 'P20_POP90P']
-for age_group in age_groups:
-    fraction_column = f'fraction_{age_group}'
-    df[fraction_column] = df[age_group] / df['P20_POP']
-
-# Create a new DataFrame with just the fractions
-fractions_df = df[[f'fraction_{age_group}' for age_group in age_groups]]
-
 # Define custom labels for the pie chart
 custom_labels = ['Ages 0-14', 'Ages 15-29', 'Ages 30-44', 'Ages 45-59', 'Ages 60-74', 'Ages 75-89', 'Ages 90+']
+age_groups = ['P20_POP0014', 'P20_POP1529', 'P20_POP3044', 'P20_POP4559', 'P20_POP6074', 'P20_POP7589', 'P20_POP90P']
 
 # Streamlit app
 st.title('Population Distribution Dashboard')
 
 # Display the DataFrame (optional)
 st.subheader('Population Data')
-st.dataframe(df)
+
+# Multiselect widget for selecting CODGEO values
+selected_codgeo_values = st.multiselect('Select CODGEO values', df['CODGEO'].unique())
+
+if selected_codgeo_values:
+    # Filter DataFrame based on selected CODGEO values
+    df = df[df['CODGEO'].isin(selected_codgeo_values)]
+
+fractions_df = generate_fractions_df(df, age_groups)
 
 # Plot the pie chart
 st.subheader('Population Distribution by Age Group')
