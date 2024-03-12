@@ -1,13 +1,18 @@
-import streamlit as st
+## IMPORTS
 import pandas as pd
+import streamlit as st
+
 import matplotlib.pyplot as plt
 import matplotlib.style as style
-import plotly.subplots as sp
+
 import plotly.graph_objects as go
 import plotly.express as px
+import plotly.subplots as sp
 from plotly.subplots import make_subplots
+
 import os
-######################### READ DATA ###############################
+
+## READ DATA
 # Set the style to use a black background
 style.use('dark_background')
 
@@ -42,13 +47,6 @@ st.write(
 )
 
 ########################### GRAPH 1 ##############################
-import streamlit as st
-import pandas as pd
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-
-# Sample DataFrame (replace this with your actual data)
-# df = ...
 
 # Define area code groups for arrondissments
 calvados_area_codes = ['141', '142', '143', '144']
