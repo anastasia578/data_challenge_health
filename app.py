@@ -22,8 +22,24 @@ df = pd.read_csv(filepath, delimiter=';', low_memory=False)
 df['CODGEO'] = df['CODGEO'].astype(str)
 df = df[df['CODGEO'].str.startswith(('14', '27', '50', '61', '76'))] ## filter for Normandy codes
 
-# Streamlit app
-st.title('Normandy Population Distribution')
+########################### INFORMATION ##############################
+st.title('Homecare Business Optimization in Normandy')
+
+st.write(
+    "Normandy, situated in northwestern France, is divided into five departments: Calvados, Eure, La Manche, Orne, and Seine-Maritime."
+    " To enhance our homecare services, we aim to strategically expand in regions with a higher density of elderly population."
+    " For detailed insights into Normandy's administrative divisions, including departments, arrondissements, cantons, and communes,"
+    " you can refer to the official INSEE page: [Normandy INSEE](https://www.insee.fr/fr/metadonnees/cog/region/REG28-normandie)."
+    " This page provides comprehensive information about the demographics and structure of each administrative level within the Normandy region."
+)
+
+st.subheader('Data Source: INSEE Dataset')
+st.write(
+    "The data used in this analysis is sourced from the INSEE dataset, providing approximately 1,900 indicators related to population evolution,"
+    " family structure, housing, education, employment, income, and various socio-economic characteristics at the communal level."
+    " The dataset covers multiple data sources, including population censuses, vital statistics, social and fiscal data, and more."
+    " For a detailed description and access to the dataset, you can visit the [INSEE Dataset](https://www.insee.fr/fr/statistiques/5359146)."
+)
 
 ########################### GRAPH 1 ##############################
 import streamlit as st
