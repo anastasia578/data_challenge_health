@@ -26,6 +26,14 @@ df = df[df['CODGEO'].str.startswith(('14', '27', '50', '61', '76'))] ## filter f
 st.title('Normandy Population Distribution')
 
 ########################### GRAPH 1 ##############################
+import streamlit as st
+import pandas as pd
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+# Sample DataFrame (replace this with your actual data)
+# df = ...
+
 # Define area code groups for arrondissments
 calvados_area_codes = ['141', '142', '143', '144']
 eure_area_codes = ['271', '272', '273']
@@ -34,8 +42,17 @@ orne_area_codes = ['611', '612', '613']
 seine_maritime_area_codes = ['761', '762', '763']
 
 # Function to calculate density for a given DataFrame and area codes
-def calculate_density(data_df):
-    return data_df[['P20_POP7589', 'P20_POP90P']].sum(axis=1) / data_df['P20_POP'] * 100
+def calculate_density(data_df, age_group):
+    if age_group == '60+':
+        columns = ['P20_POP6074', 'P20_POP7589', 'P20_POP90P']
+    elif age_group == '75+':
+        columns = ['P20_POP7589', 'P20_POP90P']
+    elif age_group == '90+':
+        columns = ['P20_POP90P']
+    else:
+        raise ValueError("Invalid age group selection")
+
+    return data_df[columns].sum(axis=1) / data_df['P20_POP'] * 100
 
 # Mapping area codes to names
 area_code_names = {
@@ -58,33 +75,52 @@ area_code_names = {
     '763': 'Rouen'
 }
 
+# Streamlit app
+st.subheader('Density in Different Arrondissements by Age Group')
+
+# User selection for age group
+selected_age_group = st.selectbox('Select Age Group:', ['60+', '75+', '90+'], index=1)
+
 # Plotting
 bar_width = 0.25
 
-# https://www.insee.fr/fr/metadonnees/cog/departement/DEP50-manche
 # Create subplots with one subplot for each region
-fig = make_subplots(rows=1, cols=1, subplot_titles=['Density of People Ages 75+ in Different Arrondissements'])
+fig = make_subplots(rows=1, cols=1, subplot_titles=[f'Density of People Ages {selected_age_group} in Different Arrondissements'])
 
 # Plotting for Calvados
 for i, area_code in enumerate(calvados_area_codes):
     area_df = df[df['CODGEO'].astype(str).str.startswith(area_code)]
-    area_density = calculate_density(area_df)
+    area_density = calculate_density(area_df, selected_age_group)
     area_name = f'{area_code_names[area_code]} ({area_code})'
     fig.add_trace(go.Bar(x=[area_name], y=[area_density.mean()], marker_color='blue', name=f'{area_code} - Calvados'))
 
-# Plotting for Next Three
+# Plotting for Eure
+for i, area_code in enumerate(eure_area_codes):
+    area_df = df[df['CODGEO'].astype(str).str.startswith(area_code)]
+    area_density = calculate_density(area_df, selected_age_group)
+    area_name = f'{area_code_names[area_code]} ({area_code})'
+    fig.add_trace(go.Bar(x=[area_name], y=[area_density.mean()], marker_color='purple', name=f'{area_code} - Eure'))
+
+# Plotting for La Manche
 for i, area_code in enumerate(la_manche_area_codes):
     area_df = df[df['CODGEO'].astype(str).str.startswith(area_code)]
-    area_density = calculate_density(area_df)
+    area_density = calculate_density(area_df, selected_age_group)
     area_name = f'{area_code_names[area_code]} ({area_code})'
     fig.add_trace(go.Bar(x=[area_name], y=[area_density.mean()], marker_color='green', name=f'{area_code} - la Manche'))
 
-# Plotting for Last Three
+# Plotting for l'Orne
 for i, area_code in enumerate(orne_area_codes):
     area_df = df[df['CODGEO'].astype(str).str.startswith(area_code)]
-    area_density = calculate_density(area_df)
+    area_density = calculate_density(area_df, selected_age_group)
     area_name = f'{area_code_names[area_code]} ({area_code})'
     fig.add_trace(go.Bar(x=[area_name], y=[area_density.mean()], marker_color='orange', name=f"{area_code} - l'Orne"))
+
+# Plotting for Seine-Maritime
+for i, area_code in enumerate(seine_maritime_area_codes):
+    area_df = df[df['CODGEO'].astype(str).str.startswith(area_code)]
+    area_density = calculate_density(area_df, selected_age_group)
+    area_name = f'{area_code_names[area_code]} ({area_code})'
+    fig.add_trace(go.Bar(x=[area_name], y=[area_density.mean()], marker_color='red', name=f"{area_code} - Seine-Maritime"))
 
 # Update layout
 fig.update_layout(
@@ -97,6 +133,7 @@ fig.update_layout(
 
 # Show the figure using Streamlit
 st.plotly_chart(fig)
+
 
 
 ########################### GRAPH 2 ##############################
