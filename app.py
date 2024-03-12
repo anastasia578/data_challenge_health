@@ -26,10 +26,12 @@ df = df[df['CODGEO'].str.startswith(('14', '27', '50', '61', '76'))] ## filter f
 st.title('Normandy Population Distribution')
 
 ########################### GRAPH 1 ##############################
-# Define area code groups
+# Define area code groups for arrondissments
 calvados_area_codes = ['141', '142', '143', '144']
+eure_area_codes = ['271', '272', '273']
 la_manche_area_codes = ['501', '502', '503', '504']
 orne_area_codes = ['611', '612', '613']
+seine_maritime_area_codes = ['761', '762', '763']
 
 # Function to calculate density for a given DataFrame and area codes
 def calculate_density(data_df):
@@ -41,13 +43,19 @@ area_code_names = {
     '142': 'Caen',
     '143': 'Lisieux',
     '144': 'Vire',
+    '271': 'Les Andelys',
+    '272': 'Bernay',
+    '273': 'Evreux',
     '501': 'Avranches',
     '502': 'Cherbourg',
     '503': 'Coutances',
     '504': 'Saint-Lô',
     '611': 'Alençon',
     '612': 'Argentan',
-    '613': 'Mortagne-au-Perche'
+    '613': 'Mortagne-au-Perche',
+    '761': 'Dieppe',
+    '762': 'Le Havre',
+    '763': 'Rouen'
 }
 
 # Plotting
