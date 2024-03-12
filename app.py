@@ -195,4 +195,27 @@ fig.update_traces(sort=False)
 # Display the interactive plot
 st.plotly_chart(fig)
 
+########################### INTERACTIVE MAP ##############################
+import streamlit as st
+import folium
+from streamlit_folium import folium_static
 
+# Normandy coordinates
+normandy_coordinates = [49.4432, -0.3621]
+
+# Create a folium map centered around Normandy
+normandy_map = folium.Map(location=normandy_coordinates, zoom_start=8)
+
+# Area codes to highlight in red
+highlighted_area_codes = ['50029', '50030', '50031', '50032', '50033']
+
+# Add a red circle marker for each highlighted area code
+for area_code in highlighted_area_codes:
+    # Replace these coordinates with the actual coordinates of the area code
+    coordinates = [48.6, -0.83]
+    folium.CircleMarker(location=coordinates, radius=10, color='red', fill=True, fill_color='red').add_to(normandy_map)
+
+
+# Render the folium map in Streamlit
+st.title('Map of Normandy with Highlighted Area Codes')
+folium_static(normandy_map)
