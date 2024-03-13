@@ -149,7 +149,6 @@ fig.update_layout(
 st.plotly_chart(fig)
 
 
-
 ########################### GRAPH 2 ##############################
 def generate_fractions_df(df, age_groups):
     # Calculate fractions
@@ -195,27 +194,87 @@ fig.update_traces(sort=False)
 # Display the interactive plot
 st.plotly_chart(fig)
 
+########################### PLOT TOP COMMUNES ##############################
+
+# Define top communes and their densities
+top_communes = [['50029', '50030', '50031', '50032', '50033'],
+                ['50027', '50028', '50029', '50030', '50031'],
+                ['5062', '5063', '5064', '5065', '5066'],
+                ['50028', '50029', '50030', '50031', '50032'],
+                ['5064', '5065', '5066', '5068', '5070'],
+                ['6159', '6160', '6161', '6162', '6163'],
+                ['6156', '6157', '6158', '6159', '6160'],
+                ['50030', '50031', '50032', '50033', '50034'],
+                ['50196', '50197', '50198', '50199', '50200'],
+                ['50026', '50027', '50028', '50029', '50030']]
+
+densities = [19.85, 19.55, 18.71, 18.60, 17.95, 17.89, 17.88, 17.12, 16.89, 16.73]
+
+# Streamlit app
+st.subheader('Top Communes with Highest Density of Elderly People in Normandy')
+
+# Plotting
+fig, ax = plt.subplots(figsize=(10, 6))
+bars = ax.barh(range(len(top_communes)), densities, color='skyblue')
+ax.set_yticks(range(len(top_communes)))
+ax.set_yticklabels([f"{'-'.join(commune)}: {density}%" for commune, density in zip(top_communes, densities)])
+ax.set_xlabel('Density of Elderly People (%)')
+ax.set_title('Top Communes with Highest Density of Elderly People in Normandy')
+ax.invert_yaxis()  # Invert y-axis to have the highest density at the top
+ax.grid(axis='x', linestyle='--', alpha=0.7)
+
+# Display the plot using Streamlit
+st.pyplot(fig)
+
 ########################### INTERACTIVE MAP ##############################
 import streamlit as st
 import folium
 from streamlit_folium import folium_static
 
-# Normandy coordinates
-normandy_coordinates = [49.4432, -0.3621]
+# # Normandy coordinates
+# normandy_coordinates = [49.4432, -0.3621]
 
-# Create a folium map centered around Normandy
-normandy_map = folium.Map(location=normandy_coordinates, zoom_start=8)
+# # Create a folium map centered around Normandy
+# normandy_map = folium.Map(location=normandy_coordinates, zoom_start=8)
 
-# Area codes to highlight in red
-highlighted_area_codes = ['50029', '50030', '50031', '50032', '50033']
+# # Area codes to highlight in red
+# highlighted_area_codes = ['50029', '50030', '50031', '50032', '50033']
 
-# Add a red circle marker for each highlighted area code
-for area_code in highlighted_area_codes:
-    # Replace these coordinates with the actual coordinates of the area code
-    coordinates = [48.6, -0.83]
-    folium.CircleMarker(location=coordinates, radius=10, color='red', fill=True, fill_color='red').add_to(normandy_map)
+# # Add a red circle marker for each highlighted area code
+# for area_code in highlighted_area_codes:
+#     # Replace these coordinates with the actual coordinates of the area code
+#     coordinates = [48.6, -0.83]
+#     folium.CircleMarker(location=coordinates, radius=10, color='red', fill=True, fill_color='red').add_to(normandy_map)
 
 
-# Render the folium map in Streamlit
-st.title('Map of Normandy with Highlighted Area Codes')
-folium_static(normandy_map)
+# # Render the folium map in Streamlit
+st.header('Map of Normandy with Highlighted Area Codes')
+# folium_static(normandy_map)
+
+top_communes = [['50029', '50030', '50031', '50032', '50033'],
+                ['50027', '50028', '50029', '50030', '50031'],
+                ['5062', '5063', '5064', '5065', '5066'],
+                ['50028', '50029', '50030', '50031', '50032'],
+                ['5064', '5065', '5066', '5068', '5070'],
+                ['6159', '6160', '6161', '6162', '6163'],
+                ['6156', '6157', '6158', '6159', '6160'],
+                ['50030', '50031', '50032', '50033', '50034'],
+                ['50196', '50197', '50198', '50199', '50200'],
+                ['50026', '50027', '50028', '50029', '50030']]
+
+# Flatten the list of lists and convert to set to get unique values
+unique_area_codes = set(code for sublist in top_communes for code in sublist)
+
+# Convert the set back to a list if necessary
+unique_area_codes_list = list(unique_area_codes)
+
+df_codes = pd.read_csv('data/code_postal_code_insee_2015public.csv', sep=";")
+
+df_codes_top = df_codes[df_codes['INSEE_COM'].isin(unique_area_codes_list)]
+
+# Split 'Geo Point' column into separate latitude and longitude columns
+df_codes_top[['latitude', 'longitude']] = df_codes_top['Geo Point'].str.split(', ', expand=True).astype(float)
+
+# Plot the points on the map
+st.map(df_codes_top[['latitude', 'longitude']])
+
