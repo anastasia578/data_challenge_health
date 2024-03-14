@@ -22,3 +22,11 @@ To get started with the project, follow these steps:
 
    ```bash
    git clone https://github.com/your-username/Data-Challenge-Health.git
+
+   ```
+
+2. EDA:
+
+3. Concerning the optimization model:
+   Requirements: Google OR Tools (v9.8.3296) and usual libraries (pandas, numpy, sklearn)
+   The model is constructed the following way: 1/ call data creation's function; 2/ set the optimization context and solve; 3/ call output printing function
